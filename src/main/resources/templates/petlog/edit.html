@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" th:lang="${#locale.language}">
+<head>
+    <title th:text="#{petlog.view.edit.title}"/>
+    <head th:insert="~{fragments/include}"/>
+    <script th:src="@{/assets/servizi-dog-theme/node_modules/jquery/dist/jquery.min.js}"></script>
+    <script th:src="@{/assets/servizi-dog-theme/node_modules/bootstrap/dist/js/bootstrap.min.js}"></script>
+</head>
+<body class="login">
+<div th:insert="~{fragments/header}"/>
+<br/><br/>
+<br/><br/>
+<br/><br/>
+<div class="container">
+    <div class="row">
+        <div sec:authorize="hasAuthority('ADMIN')" class="col-md-6 col-md-offset-3">
+            <div class="portlet portlet-orange">
+                <div class="portlet-body">
+                    <div th:data-testid="petLogEditMessage" th:if="${message}" class="alert alert-success" th:text="${message}"/>
+                    <form id="edit-petlog" th:action="@{/petlog/update}" th:object="${petLogCommand}" method="post"
+                          class="form-horizontal" enctype="multipart/form-data">
+                        <fieldset>
+                            <legend th:text="#{petlog.edit}"/>
+                            
+                            <label for="pet"><h4 th:text="#{petlog.pet}"/></label>
+                            <select id="petSelector" name="pet" th:data-testid="petLogPet" class="form-control">
+                                <option th:each="pet : ${pets}" th:value="${pet.id}" th:text="${pet.name}" 
+                                        th:selected="(${pet.id} == *{pet})"/>
+                            </select>
+                            <br/>
+                            
+                            <label for="vetName"><h4 th:text="#{petlog.vetName}"/></label>
+                            <select id="vetSelector" name="vetName" th:data-testid="petLogVet" th:field="*{vetName}" class="form-control">
+                                <option th:each="vet : ${veterinarians}" th:value="${vet}" th:text="${vet}"/>
+                            </select>
+                            <br/>
+                            
+                            <label for="signs"><h4 th:text="#{petlog.signs}"/></label>
+                            <textarea name="signs" th:data-testid="petLogSigns" th:field="*{signs}" rows="8" class="form-control"
+                                      placeholder="Signs" id='signs'/>
+                            <label th:if="${#fields.hasErrors('signs')}" th:errors="*{signs}"></label>
+                            <br/>
+                            
+                            <label for="diagnosis"><h4 th:text="#{petlog.diagnosis}"/></label>
+                            <textarea name="diagnosis" th:data-testid="petLogDiagnosis" th:field="*{diagnosis}" rows="8" class="form-control"
+                                      placeholder="Diagnosis" id='diagnosis'/>
+                            <label th:if="${#fields.hasErrors('diagnosis')}" th:errors="*{diagnosis}"></label>
+                            <br/>
+                            
+                            <!-- Medicine field is hidden for admin users -->
+                            <input type="hidden" name="medicine" th:field="*{medicine}" />
+                            
+                            <div th:if="${attachment != null}">
+                                <label><h4 th:text="#{petlog.current.attachment}"/></label>
+                                <p th:text="${attachment.originalFilename}"></p>
+                                <a th:href="@{/petlog/download/{id}(id=${petLogCommand.id})}" class="btn btn-sm btn-info">
+                                    <span class="glyphicon glyphicon-download" aria-hidden="true"></span>
+                                    <span th:text="#{button.download}"></span>
+                                </a>
+                            </div>
+                            <br/>
+                            
+                            <label for="attachment"><h4 th:data-testid="petLogAttachment" th:text="#{petlog.attachment}"/></label>
+                            <input type="file" name="attachment"/>
+                            <br/><br/>
+                            
+                            <input type="hidden" th:field="*{id}"/>
+                            <input type="submit" class="btn btn-warning btn-block" th:value="#{button.update}"/>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- Unauthorized access message -->
+        <div sec:authorize="!hasAuthority('ADMIN')" class="col-md-6 col-md-offset-3">
+            <div class="alert alert-danger">
+                <h4 th:text="#{access.denied}"></h4>
+                <p th:text="#{access.denied.message}"></p>
+            </div>
+        </div>
+    </div>
+</div>
+<br/><br/>
+<div th:insert="~{fragments/footer}"/>
+</body>
+</html>

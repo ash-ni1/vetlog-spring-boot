@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="https://www.thymeleaf.org">
+<html xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <title th:text="#{pet.view.list.title}"></title>
     <head th:insert="~{fragments/include}"/>
@@ -25,6 +26,7 @@
             <div class="col-sm-6 col-md-4">
                 <div class="thumbnail">
                     <div class="caption">
+                        <div class="pet-info-container">
                         <h3 th:text="${log.pet.name}"></h3>
                         <p>
                         <ul>
@@ -36,6 +38,14 @@
                             <a th:if="${log.isHasAttachment}" th:href="${gcpPrescriptionUrl + log.uuid}"><p th:text="#{petlog.file}"/></a>
                         </ul>
                         </p>
+                        </div>
+                        <br/>
+                        <!-- Edit button only visible to admin users -->
+                        <center sec:authorize="hasAuthority('ADMIN')">
+                            <a th:data-testid="petLogEditButton" th:href="@{/petlog/edit(uuid=${log.uuid})}" class="btn btn-warning">
+                                <p th:text="#{pet.edit}"/>
+                            </a>
+                        </center>
                     </div>
                 </div>
             </div>

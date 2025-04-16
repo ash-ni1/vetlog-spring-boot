@@ -16,6 +16,7 @@
 
 package com.josdem.vetlog.controller;
 
+import com.josdem.vetlog.binder.PetLogBinder;
 import com.josdem.vetlog.command.PetLogCommand;
 import com.josdem.vetlog.config.ApplicationProperties;
 import com.josdem.vetlog.model.Pet;
@@ -51,6 +52,7 @@ public class PetLogController {
 
     private final PetService petService;
     private final PetLogService petLogService;
+    private final PetLogBinder petLogBinder;
     private final UserService userService;
     private final LocaleService localeService;
     private final ApplicationProperties applicationProperties;
@@ -71,6 +73,23 @@ public class PetLogController {
         var currentUser = userService.getCurrentUser();
         var pets = getPetsFromUser(pet, currentUser);
         return fillModelAndView(modelAndView, pets, request);
+    }
+
+    @GetMapping(value = "/edit")
+    public ModelAndView edit(@RequestParam("uuid") String uuid, @RequestParam("petid") Long id) {
+        log.info("Editing petlog: {} of pet id: {}", uuid, id);
+        var pet = petService.getPetById(id);
+        var petLogs = petLogService.getPetLogsByPet(pet);
+        var petLog = petLogs.stream()
+            .filter(log -> log.getUuid().equals(uuid))
+            .findFirst()
+            .orElse(null);
+        var modelAndView = new ModelAndView();
+        final PetLogCommand petLogCommand = petLogBinder.bindPetLog(petLog);
+        modelAndView.addObject(PET_LOG_COMMAND, petLogCommand);
+        modelAndView.addObject("pets", pet);
+        modelAndView.addObject("veterinarians", petLog.getVetName());   
+        return modelAndView;
     }
 
     @PostMapping(value = "/save")

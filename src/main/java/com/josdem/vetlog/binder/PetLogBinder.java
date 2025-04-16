@@ -35,4 +35,15 @@ public class PetLogBinder {
         petLog.setHasAttachment(petLogCommand.isHasAttachment());
         return petLog;
     }
+
+    public PetLogCommand bindPetLog(PetLog petLog) {
+        PetLogCommand command = new PetLogCommand();
+        command.setUuid(petLog.getUuid());
+        command.setVetName(petLog.getVetName());
+        command.setSigns(petLog.getSigns());
+        command.setDiagnosis(petLog.getDiagnosis());
+        command.setMedicine(petLog.getMedicine());
+        command.setHasAttachment(petLog.isHasAttachment());
+        return command;
+    }
 }

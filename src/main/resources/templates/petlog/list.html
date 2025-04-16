@@ -42,7 +42,7 @@
                         <br/>
                         <!-- Edit button only visible to admin users -->
                         <center sec:authorize="hasAuthority('ADMIN')">
-                            <a th:data-testid="petLogEditButton" th:href="@{/petlog/edit(uuid=${log.uuid})}" class="btn btn-warning">
+                            <a th:data-testid="petLogEditButton" th:href="@{/petlog/edit(uuid=${log.uuid},petid=${log.pet.id})}" class="btn btn-warning">
                                 <p th:text="#{pet.edit}"/>
                             </a>
                         </center>
